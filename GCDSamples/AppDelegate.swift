@@ -1,10 +1,6 @@
-//
+
 //  AppDelegate.swift
-//  GCDSamples
-//
-//  Created by Gabriel Theodoropoulos on 07/11/16.
-//  Copyright © 2016 Appcoda. All rights reserved.
-//
+
 
 import UIKit
 

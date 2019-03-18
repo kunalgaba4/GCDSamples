@@ -1,10 +1,5 @@
-//
+
 //  ViewController.swift
-//  GCDSamples
-//
-//  Created by Gabriel Theodoropoulos on 07/11/16.
-//  Copyright © 2016 Appcoda. All rights reserved.
-//
 
 import UIKit
 
@@ -12,6 +7,7 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var imageView: UIImageView!
     
+    @IBOutlet weak var lblCheck: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -28,32 +24,33 @@ class ViewController: UIViewController {
         
         // Uncomment the following method call to test
         
-        simpleQueues()
+        //simpleQueues()
+         //queuesWithQoS()
         
-        // queuesWithQoS()
-        
-        /*
-         concurrentQueues()
-         if let queue = inactiveQueue {
-            queue.activate()
-         }
-         */
+         //concurrentQueues()
+//         if let queue = inactiveQueue {
+//            queue.activate()
+//         }
         
         // queueWithDelay()
-        
-        // fetchImage()
-        
-        // useWorkItem()
+         fetchImage()
+        print("end")
+         //useWorkItem()
     }
     
     
-    
     func simpleQueues() {
-        let queue = DispatchQueue(label: "com.appcoda.myqueue")
+        //Creation of serial queue
+        let queue = DispatchQueue(label: "com.goodCompany.myqueue")
         
         queue.async {
             for i in 0..<10 {
                 print("🔴", i)
+                
+                DispatchQueue.main.async {
+                    self.lblCheck.text = "\(i)"
+                }
+                
             }
         }
         
@@ -64,10 +61,10 @@ class ViewController: UIViewController {
     
     
     func queuesWithQoS() {
-        let queue1 = DispatchQueue(label: "com.appcoda.queue1", qos: DispatchQoS.userInitiated)
-        // let queue1 = DispatchQueue(label: "com.appcoda.queue1", qos: DispatchQoS.background)
-        // let queue2 = DispatchQueue(label: "com.appcoda.queue2", qos: DispatchQoS.userInitiated)
-        let queue2 = DispatchQueue(label: "com.appcoda.queue2", qos: DispatchQoS.utility)
+        let queue1 = DispatchQueue(label: "com.goodCompany.queue1", qos: DispatchQoS.userInitiated)
+        // let queue1 = DispatchQueue(label: "com.goodCompany.queue1", qos: DispatchQoS.background)
+        // let queue2 = DispatchQueue(label: "com.goodCompany.queue2", qos: DispatchQoS.userInitiated)
+        let queue2 = DispatchQueue(label: "com.goodCompany.queue2", qos: DispatchQoS.utility)
         
         queue1.async {
             for i in 0..<10 {
@@ -89,10 +86,10 @@ class ViewController: UIViewController {
     
     var inactiveQueue: DispatchQueue!
     func concurrentQueues() {
-        // let anotherQueue = DispatchQueue(label: "com.appcoda.anotherQueue", qos: .utility)
-        // let anotherQueue = DispatchQueue(label: "com.appcoda.anotherQueue", qos: .utility, attributes: .concurrent)
-        // let anotherQueue = DispatchQueue(label: "com.appcoda.anotherQueue", qos: .utility, attributes: .initiallyInactive)
-        let anotherQueue = DispatchQueue(label: "com.appcoda.anotherQueue", qos: .userInitiated, attributes: [.concurrent, .initiallyInactive])
+        // let anotherQueue = DispatchQueue(label: "com.goodCompany", qos: .utility)
+         let anotherQueue = DispatchQueue(label: "com.goodCompany", qos: .utility, attributes: .concurrent)
+        // let anotherQueue = DispatchQueue(label: "com.goodCompany", qos: .utility, attributes: .initiallyInactive)
+//        let anotherQueue = DispatchQueue(label: "com.goodCompany", qos: .userInitiated, attributes: [.concurrent, .initiallyInactive])
         inactiveQueue = anotherQueue
         
         anotherQueue.async {
@@ -118,7 +115,7 @@ class ViewController: UIViewController {
     
     
     func queueWithDelay() {
-        let delayQueue = DispatchQueue(label: "com.appcoda.delayqueue", qos: .userInitiated)
+        let delayQueue = DispatchQueue(label: "com.goodCompany", qos: .userInitiated)
         
         print(Date())
         let additionalTime: DispatchTimeInterval = .seconds(2)
@@ -133,10 +130,11 @@ class ViewController: UIViewController {
         let imageURL: URL = URL(string: "http://www.appcoda.com/wp-content/uploads/2015/12/blog-logo-dark-400.png")!
         
         (URLSession(configuration: URLSessionConfiguration.default)).dataTask(with: imageURL, completionHandler: { (imageData, response, error) in
-            
+            print("IMage found")
             if let data = imageData {
                 print("Did download image data")
                 
+                //ACCESS THE MAIN QUEUE AND UPDATE THE USER INTERFACE
                 DispatchQueue.main.async {
                     self.imageView.image = UIImage(data: data)
                 }
@@ -152,8 +150,10 @@ class ViewController: UIViewController {
             value += 5
         }
         
-        workItem.perform()
+        //will run on the main thread.
+        //workItem.perform()
         
+        //will run on the background thread
         let queue = DispatchQueue.global(qos: .utility)
         /*
          queue.async {
@@ -161,12 +161,13 @@ class ViewController: UIViewController {
          }
          */
         
+        //method provided to execute the work item.
         queue.async(execute: workItem)
         
         
-        workItem.notify(queue: DispatchQueue.main) {
-            print("value = ", value)
-        }
+//        workItem.notify(queue: DispatchQueue.main) {
+//            print("value = ", value)
+//        }
     }
 }
 
